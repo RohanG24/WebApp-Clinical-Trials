@@ -279,6 +279,7 @@ main > * { max-width: var(--read); margin-left: auto; margin-right: auto; }
 
 .card ul { margin: 0; padding-left: 1.3rem; }
 .card li { margin: 0.4rem 0; }
+.card li strong { font-weight: 700; color: var(--ink); }
 .card li.lead {
   list-style: none;
   margin-left: -0.55rem;

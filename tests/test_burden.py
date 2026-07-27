@@ -12,11 +12,21 @@ def load_fixture():
         return json.load(handle)
 
 
+def strip_bold(text):
+    return text.replace("[[b]]", "").replace("[[/b]]", "")
+
+
 class TimeToxicityTests(unittest.TestCase):
     def setUp(self):
         self.data = load_fixture()
         self.section = assess_time_toxicity(self.data["protocolSection"])
-        self.text = "\n".join(self.section["bullets"])
+        self.raw = "\n".join(self.section["bullets"])
+        self.text = strip_bold(self.raw)
+
+    def test_duration_and_cadence_are_bolded(self):
+        self.assertIn("[[b]]2 years 6 months[[/b]]", self.raw)
+        self.assertIn("[[b]]about every 3 weeks[[/b]]", self.raw)
+        self.assertIn("[[b]]21-day cycles[[/b]]", self.raw)
 
     def test_section_is_featured(self):
         self.assertTrue(self.section["featured"])
@@ -53,7 +63,11 @@ class SideEffectTests(unittest.TestCase):
     def setUp(self):
         self.data = load_fixture()
         self.section = assess_side_effects(self.data)
-        self.text = "\n".join(self.section["bullets"])
+        self.raw = "\n".join(self.section["bullets"])
+        self.text = strip_bold(self.raw)
+
+    def test_percentages_are_bolded(self):
+        self.assertIn("[[b]]33%[[/b]]", self.raw)
 
     def test_section_is_featured(self):
         self.assertTrue(self.section["featured"])

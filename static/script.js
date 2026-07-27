@@ -139,6 +139,21 @@
     resultEl.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
+  // Render text containing [[b]]...[[/b]] markers into a node, building real
+  // text/<strong> children (never innerHTML) so external trial text stays inert.
+  function appendRich(node, text) {
+    text.split(/\[\[b\]\]|\[\[\/b\]\]/).forEach(function (part, i) {
+      if (part === "") return;
+      if (i % 2 === 1) {
+        var strong = document.createElement("strong");
+        strong.textContent = part;
+        node.appendChild(strong);
+      } else {
+        node.appendChild(document.createTextNode(part));
+      }
+    });
+  }
+
   function renderSection(section) {
     var card = document.createElement("div");
     card.className = "card" + (section.featured ? " card-featured" : "");
@@ -160,12 +175,12 @@
       var li = document.createElement("li");
       if (/^\s/.test(bullet)) {
         li.className = "sub";
-        li.textContent = bullet.replace(/^\s*-\s*/, "").trim();
+        appendRich(li, bullet.replace(/^\s*-\s*/, "").trim());
       } else if (/:\s*$/.test(bullet)) {
         li.className = "lead";
-        li.textContent = bullet;
+        appendRich(li, bullet);
       } else {
-        li.textContent = bullet;
+        appendRich(li, bullet);
       }
       ul.appendChild(li);
     });

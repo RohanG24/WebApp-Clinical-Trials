@@ -76,6 +76,11 @@ _MAX_INTERVENTIONS = 6
 _MAX_LOCATIONS = 5
 
 
+# Bold markers; the client renders [[b]]...[[/b]] as <strong>. See burden.py.
+def _b(value: Any) -> str:
+    return f"[[b]]{value}[[/b]]"
+
+
 def summarize_study(data: Dict[str, Any]) -> Dict[str, Any]:
     """Build a structured, patient-friendly summary from raw study JSON."""
     protocol = data.get("protocolSection", {})
@@ -146,7 +151,7 @@ def _section_type_and_phase(protocol: Dict[str, Any]) -> Dict[str, Any]:
 
     enrollment = design.get("enrollmentInfo", {}).get("count")
     if enrollment:
-        bullets.append(f"About {enrollment} patients are expected to take part.")
+        bullets.append(f"About {_b(enrollment)} patients are expected to take part.")
 
     return {"heading": "Study type and phase", "icon": "flask", "bullets": bullets}
 
@@ -161,12 +166,12 @@ def _section_status(protocol: Dict[str, Any]) -> Dict[str, Any]:
 
     start = status_mod.get("startDateStruct", {}).get("date")
     if start:
-        bullets.append(f"Started: {_pretty_date(start)}")
+        bullets.append(f"Started: {_b(_pretty_date(start))}")
 
     completion = status_mod.get("primaryCompletionDateStruct", {}).get("date") or \
         status_mod.get("completionDateStruct", {}).get("date")
     if completion:
-        bullets.append(f"Expected to finish (main results): {_pretty_date(completion)}")
+        bullets.append(f"Expected to finish (main results): {_b(_pretty_date(completion))}")
 
     return {"heading": "Is it enrolling now?", "icon": "calendar", "bullets": bullets}
 
@@ -226,7 +231,7 @@ def _section_locations(protocol: Dict[str, Any]) -> Dict[str, Any]:
     if not locations:
         return {"heading": "Where is it happening?", "icon": "map-pin", "bullets": bullets}
 
-    bullets.append(f"Taking place at {len(locations)} location(s), including:")
+    bullets.append(f"Taking place at {_b(len(locations))} location(s), including:")
     for loc in locations[:_MAX_LOCATIONS]:
         parts = [loc.get("facility"), loc.get("city"), loc.get("state"), loc.get("country")]
         label = ", ".join(p for p in parts if p)
@@ -349,11 +354,11 @@ def _format_age_range(minimum: Optional[str], maximum: Optional[str]) -> Optiona
     has_min = minimum and minimum.upper() != "N/A"
     has_max = maximum and maximum.upper() != "N/A"
     if has_min and has_max:
-        return f"Ages {minimum} to {maximum}"
+        return f"Ages {_b(minimum)} to {_b(maximum)}"
     if has_min:
-        return f"Ages {minimum} and older"
+        return f"Ages {_b(minimum)} and older"
     if has_max:
-        return f"Up to {maximum}"
+        return f"Up to {_b(maximum)}"
     return None
 
 

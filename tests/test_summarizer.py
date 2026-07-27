@@ -12,11 +12,20 @@ def load_fixture():
         return json.load(handle)
 
 
+def strip_bold(text):
+    return text.replace("[[b]]", "").replace("[[/b]]", "")
+
+
 class SummarizeStudyTests(unittest.TestCase):
     def setUp(self):
         self.summary = summarize_study(load_fixture())
 
     def _section(self, heading):
+        """Return the section with bold markers stripped (for content checks)."""
+        section = self._section_raw(heading)
+        return {"heading": heading, "bullets": [strip_bold(b) for b in section["bullets"]]}
+
+    def _section_raw(self, heading):
         for section in self.summary["sections"]:
             if section["heading"] == heading:
                 return section
@@ -66,6 +75,21 @@ class SummarizeStudyTests(unittest.TestCase):
     def test_contacts_listed(self):
         bullets = self._section("Who to contact")["bullets"]
         self.assertTrue(any("trials@example.org" in b for b in bullets))
+
+    def test_key_figures_are_bolded(self):
+        # Enrollment count, location count, dates, and ages are wrapped in
+        # bold markers so the client can render them as <strong>.
+        phase = "\n".join(self._section_raw("Study type and phase")["bullets"])
+        self.assertIn("[[b]]120[[/b]]", phase)
+
+        status = "\n".join(self._section_raw("Is it enrolling now?")["bullets"])
+        self.assertIn("[[b]]June 1, 2023[[/b]]", status)
+
+        loc = "\n".join(self._section_raw("Where is it happening?")["bullets"])
+        self.assertIn("[[b]]2[[/b]]", loc)
+
+        elig = "\n".join(self._section_raw("Who can join?")["bullets"])
+        self.assertIn("[[b]]18 Years[[/b]]", elig)
 
 
 class RelevanceWarningTests(unittest.TestCase):

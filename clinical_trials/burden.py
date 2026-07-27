@@ -34,6 +34,11 @@ _MAX_SIDE_EFFECTS = 6
 _MAX_SERIOUS = 4
 _MAX_VISIT_SNIPPETS = 3
 
+# Lightweight bold markers. The client turns [[b]]...[[/b]] into <strong>,
+# building DOM nodes (never innerHTML) so external trial text stays inert.
+def _b(value: Any) -> str:
+    return f"[[b]]{value}[[/b]]"
+
 
 # --------------------------------------------------------------------------- #
 # Time toxicity
@@ -51,14 +56,17 @@ def assess_time_toxicity(protocol: Dict[str, Any]) -> Dict[str, Any]:
 
     cadence = _extract_cadence(text_blob)
     if cadence:
-        bullets.append("How often treatment is given: " + cadence + ".")
+        bullets.append("How often treatment is given: " + _b(cadence) + ".")
 
     cycle = _extract_cycle(text_blob)
     if cycle:
+        cycle = re.sub(r"(\d+-(?:day|week) cycles?)", lambda m: _b(m.group(1)), cycle)
         bullets.append("Treatment is given " + cycle + ".")
 
     visits = _extract_visit_mentions(text_blob)
     for snippet in visits:
+        # Bold any counts inside the visit sentence (e.g. "day 1", "2 nights").
+        snippet = re.sub(r"\b(\d+)\b", lambda m: _b(m.group(1)), snippet)
         bullets.append(snippet)
 
     if not cadence and not cycle and not visits:
@@ -95,7 +103,7 @@ def _study_duration(protocol: Dict[str, Any]) -> Optional[str]:
 
     human = _humanize_months(span)
     return (
-        f"This study runs for roughly {human} overall "
+        f"This study runs for roughly {_b(human)} overall "
         f"(from {_year_month(start)} to {_year_month(end)}). Your own time in "
         "the study may be shorter -- ask how long you would take part."
     )
@@ -276,7 +284,7 @@ def _top_events(events: List[Dict[str, Any]], limit: int) -> List[str]:
     labels = []
     for rate, term in scored[:limit]:
         percent = int(math.floor(rate * 100 + 0.5))  # round half up
-        labels.append(f"{term} — about {percent}% of participants")
+        labels.append(f"{term} — about {_b(f'{percent}%')} of participants")
     return labels
 
 
