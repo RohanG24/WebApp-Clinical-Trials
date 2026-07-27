@@ -1,133 +1,272 @@
+/* ------------------------------------------------------------------ *
+ * Clinical Trial Summarizer — patient-friendly styling
+ * Goals: high readability, calm colors, generous spacing, large touch
+ * targets, works in light & dark, and prints cleanly for appointments.
+ * ------------------------------------------------------------------ */
+
 :root {
-  --bg: #f5f7fa;
-  --card: #ffffff;
-  --ink: #1c2733;
-  --muted: #5b6b7b;
+  --bg: #eef2f7;
+  --surface: #ffffff;
+  --surface-alt: #f2f7fd;
+  --ink: #1b2733;
+  --ink-soft: #48586a;
   --accent: #1a6dcc;
-  --accent-dark: #12508f;
-  --ok-bg: #e7f5ec;
-  --ok-ink: #1c6b3d;
-  --warn-bg: #fdf1e0;
-  --warn-ink: #915213;
-  --border: #dde3ea;
-  --shadow: 0 1px 3px rgba(20, 40, 60, 0.08), 0 6px 20px rgba(20, 40, 60, 0.06);
+  --accent-dark: #124f93;
+  --accent-soft: #e6f0fb;
+  --ok-bg: #e6f5ec;
+  --ok-ink: #1a6b3d;
+  --warn-bg: #fdf0df;
+  --warn-ink: #8a4c10;
+  --border: #d8e0ea;
+  --radius: 14px;
+  --shadow: 0 1px 2px rgba(20, 40, 60, 0.06), 0 8px 24px rgba(20, 40, 60, 0.07);
+  --measure: 40rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f151c;
+    --surface: #182430;
+    --surface-alt: #1c2c3c;
+    --ink: #e8eef5;
+    --ink-soft: #a7b6c6;
+    --accent: #5aa2ee;
+    --accent-dark: #8fc0f6;
+    --accent-soft: #1e2f42;
+    --ok-bg: #16351f;
+    --ok-ink: #8fe0ac;
+    --warn-bg: #3a2a12;
+    --warn-ink: #f2c88a;
+    --border: #2a3a4b;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.35);
+  }
 }
 
 * { box-sizing: border-box; }
 
+html { -webkit-text-size-adjust: 100%; }
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 18px;              /* larger base for readability */
+  line-height: 1.6;
   color: var(--ink);
   background: var(--bg);
-  line-height: 1.55;
 }
 
+/* -------------------------------- Hero -------------------------------- */
 .hero {
   background: linear-gradient(135deg, var(--accent), var(--accent-dark));
   color: #fff;
-  padding: 2.5rem 1.25rem 2rem;
-  text-align: center;
+  padding: 2.75rem 1.25rem 3.5rem;
 }
-.hero h1 { margin: 0 0 0.5rem; font-size: 1.9rem; }
-.subtitle { margin: 0 auto; max-width: 32rem; opacity: 0.95; }
+.hero-inner { max-width: var(--measure); margin: 0 auto; text-align: center; }
+.hero h1 {
+  margin: 0 0 0.6rem;
+  font-size: clamp(1.6rem, 4vw, 2.15rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.hero-mark { font-size: 1em; }
+.subtitle { margin: 0 auto; max-width: 34rem; font-size: 1.05rem; opacity: 0.96; }
 
+/* -------------------------------- Layout -------------------------------- */
 main {
-  max-width: 46rem;
+  max-width: var(--measure);
   margin: 0 auto;
-  padding: 1.5rem 1.25rem 4rem;
+  padding: 0 1.25rem 4rem;
 }
 
+/* -------------------------------- Search -------------------------------- */
 .search {
   display: flex;
-  gap: 0.5rem;
-  margin-top: -2.75rem;
-  margin-bottom: 0.5rem;
+  gap: 0.6rem;
+  margin-top: -1.75rem;
+  margin-bottom: 0.6rem;
 }
 .search input {
   flex: 1;
-  padding: 0.85rem 1rem;
-  font-size: 1rem;
+  min-width: 0;
+  padding: 0.95rem 1.05rem;
+  font-size: 1.05rem;
+  color: var(--ink);
   border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--card);
+  border-radius: 12px;
+  background: var(--surface);
   box-shadow: var(--shadow);
 }
-.search input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.search input:focus-visible { outline: 3px solid var(--accent); outline-offset: 1px; }
 .search button {
-  padding: 0.85rem 1.4rem;
-  font-size: 1rem;
-  font-weight: 600;
+  padding: 0.95rem 1.5rem;
+  font-size: 1.05rem;
+  font-weight: 650;
   color: #fff;
   background: var(--accent);
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
   box-shadow: var(--shadow);
+  transition: background 0.15s ease;
 }
 .search button:hover { background: var(--accent-dark); }
-.search button:disabled { opacity: 0.6; cursor: default; }
+.search button:disabled { opacity: 0.55; cursor: default; }
+.search button:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
 
-.hint { margin: 0.25rem 0 1rem; font-size: 0.85rem; color: var(--muted); }
-
-.status { min-height: 1.25rem; margin: 0.5rem 0; color: var(--muted); }
-.status.error { color: #b3261e; font-weight: 500; }
-
-.result { margin-top: 0.5rem; }
-
-.result-header {
-  background: var(--card);
+.hint { margin: 0.4rem 0 1.4rem; font-size: 0.9rem; color: var(--ink-soft); }
+.example {
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--accent);
+  background: var(--accent-soft);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 1.1rem 1.25rem;
+  border-radius: 999px;
+  padding: 0.15rem 0.7rem;
+  cursor: pointer;
+}
+.example:hover { background: var(--accent); color: #fff; }
+
+/* -------------------------------- Status -------------------------------- */
+.status { min-height: 1.2rem; margin: 0.4rem 0; color: var(--ink-soft); }
+.status.error {
+  color: var(--warn-ink);
+  background: var(--warn-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  font-weight: 500;
+}
+
+/* ------------------------------ Placeholder ------------------------------ */
+.placeholder {
+  text-align: center;
+  color: var(--ink-soft);
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 2.25rem 1.5rem;
+  margin-top: 0.5rem;
+}
+.placeholder-icon { font-size: 2.4rem; margin-bottom: 0.5rem; }
+.placeholder-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem auto 0;
+  max-width: 24rem;
+  text-align: left;
+}
+.placeholder-list li { margin: 0.4rem 0; }
+
+/* ------------------------------- Skeleton ------------------------------- */
+.skeleton > div {
+  background: linear-gradient(90deg, var(--surface) 25%, var(--surface-alt) 50%, var(--surface) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.3s infinite;
+  border-radius: var(--radius);
+  margin-bottom: 0.9rem;
+}
+.skeleton-header { height: 5rem; }
+.skeleton-card { height: 8rem; }
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton > div { animation: none; }
+}
+
+/* -------------------------------- Result -------------------------------- */
+.result-header {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.35rem;
   margin-bottom: 1rem;
   box-shadow: var(--shadow);
 }
-.result-header h2 { margin: 0 0 0.35rem; font-size: 1.25rem; }
-.result-header a { color: var(--accent); text-decoration: none; font-size: 0.9rem; }
-.result-header a:hover { text-decoration: underline; }
+.result-header h2 { margin: 0 0 0.4rem; font-size: 1.35rem; line-height: 1.35; }
+.result-header .study-link {
+  display: inline-block;
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 0.92rem;
+  margin-bottom: 0.2rem;
+}
+.result-header .study-link:hover { text-decoration: underline; }
 
 .badge {
-  display: inline-block;
-  margin-top: 0.6rem;
-  padding: 0.35rem 0.7rem;
-  border-radius: 999px;
-  font-size: 0.85rem;
+  display: block;
+  margin-top: 0.75rem;
+  padding: 0.6rem 0.85rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
   font-weight: 500;
 }
 .badge.ok { background: var(--ok-bg); color: var(--ok-ink); }
 .badge.warn { background: var(--warn-bg); color: var(--warn-ink); }
 
-.card {
-  background: var(--card);
+.toolbar { margin-bottom: 1rem; }
+.print-btn {
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--accent);
+  background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 1rem 1.25rem;
-  margin-bottom: 0.9rem;
+  border-radius: 10px;
+  padding: 0.55rem 1rem;
+  cursor: pointer;
+}
+.print-btn:hover { background: var(--accent-soft); }
+
+/* --------------------------------- Cards --------------------------------- */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.15rem 1.35rem;
+  margin-bottom: 1rem;
   box-shadow: var(--shadow);
 }
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0 0 0.7rem;
+  font-size: 1.15rem;
+  color: var(--accent-dark);
+}
+.card-title .card-icon { font-size: 1.25rem; line-height: 1; }
+
+.card ul { margin: 0; padding-left: 1.35rem; }
+.card li { margin: 0.4rem 0; }
+.card li.sub {
+  list-style: none;
+  margin-left: 0.2rem;
+  padding-left: 1rem;
+  border-left: 2px solid var(--border);
+  color: var(--ink-soft);
+}
+.card li.lead { list-style: none; margin-left: -0.5rem; font-weight: 600; margin-top: 0.7rem; }
+
+/* Featured cards: time toxicity & side effects — calm, not alarming */
 .card-featured {
-  border-left: 4px solid var(--accent);
-  background: #f3f8fe;
+  border: 1px solid var(--accent);
+  border-left: 5px solid var(--accent);
+  background: var(--surface-alt);
 }
-.card-featured h3 { color: var(--accent-dark); }
-.card-featured h3::before {
-  content: "★ ";
-  color: var(--accent);
-}
+.card-featured .card-title { color: var(--accent-dark); }
 
-.card h3 { margin: 0 0 0.6rem; font-size: 1.05rem; color: var(--accent-dark); }
-.card ul { margin: 0; padding-left: 1.2rem; }
-.card li { margin: 0.25rem 0; }
-.card li.sub { list-style: none; margin-left: 0.4rem; color: var(--muted); }
-
+/* ------------------------------ Disclaimer ------------------------------ */
 .disclaimer {
-  margin-top: 1.5rem;
-  font-size: 0.8rem;
-  color: var(--muted);
-  border-top: 1px solid var(--border);
-  padding-top: 1rem;
+  margin-top: 1.75rem;
+  padding: 1rem 1.15rem;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
 }
+.disclaimer p { margin: 0; }
 
 .visually-hidden {
   position: absolute;
@@ -137,6 +276,23 @@ main {
   white-space: nowrap; border: 0;
 }
 
-@media (max-width: 520px) {
+/* ------------------------------ Responsive ------------------------------ */
+@media (max-width: 540px) {
+  body { font-size: 17px; }
   .search { flex-direction: column; margin-top: -1.5rem; }
+  .search button { width: 100%; }
+}
+
+/* -------------------------------- Print -------------------------------- */
+@media print {
+  body { background: #fff; color: #000; font-size: 12pt; }
+  .hero, .search, .hint, .status, .placeholder, .skeleton, .toolbar { display: none !important; }
+  main { max-width: none; padding: 0; }
+  .card, .result-header, .disclaimer {
+    box-shadow: none;
+    border: 1px solid #bbb;
+    break-inside: avoid;
+  }
+  .card-featured { border-left: 4px solid #000; }
+  .badge { border: 1px solid #999; }
 }

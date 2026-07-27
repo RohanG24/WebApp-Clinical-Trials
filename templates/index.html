@@ -8,15 +8,18 @@
 </head>
 <body>
   <header class="hero">
-    <h1>Clinical Trial Summarizer</h1>
-    <p class="subtitle">
-      Enter a study's NCT number to get a quick, plain-language summary —
-      built for breast and colon cancer patients.
-    </p>
+    <div class="hero-inner">
+      <h1><span class="hero-mark" aria-hidden="true">🩺</span> Clinical Trial Summarizer</h1>
+      <p class="subtitle">
+        Enter a study's NCT number to get a clear, plain-language summary —
+        built for breast and colon cancer patients. We focus on what a trial
+        would actually mean for your time and your body.
+      </p>
+    </div>
   </header>
 
   <main>
-    <form id="search-form" class="search">
+    <form id="search-form" class="search" role="search">
       <label for="nct-input" class="visually-hidden">NCT number</label>
       <input
         id="nct-input"
@@ -25,24 +28,48 @@
         placeholder="e.g. NCT05773144"
         autocomplete="off"
         spellcheck="false"
+        autocapitalize="characters"
         required
       />
       <button type="submit" id="submit-btn">Summarize</button>
     </form>
 
     <p class="hint">
-      Tip: you can paste the number, a bare 8-digit id, or a full
-      clinicaltrials.gov study link.
+      You can paste the number, a bare 8-digit id, or a full clinicaltrials.gov
+      study link. Try an example:
+      <button type="button" class="example" data-nct="NCT05773144">NCT05773144</button>
     </p>
 
     <div id="status" class="status" role="status" aria-live="polite"></div>
+
+    <!-- Friendly first-visit placeholder -->
+    <section id="placeholder" class="placeholder">
+      <div class="placeholder-icon" aria-hidden="true">🔎</div>
+      <p>Enter an NCT number above to see a patient-friendly summary here.</p>
+      <ul class="placeholder-list">
+        <li>⏳ How much of your time the trial would take</li>
+        <li>💊 Side effects that have been reported</li>
+        <li>✅ Whether you might be able to join</li>
+      </ul>
+    </section>
+
+    <!-- Skeleton shown while loading -->
+    <section id="skeleton" class="skeleton" hidden aria-hidden="true">
+      <div class="skeleton-header"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+    </section>
+
     <section id="result" class="result" hidden></section>
 
-    <p class="disclaimer">
-      This tool summarizes public information from ClinicalTrials.gov. It is not
-      medical advice. Always confirm details with the study team and your own
-      doctor before making any decisions.
-    </p>
+    <footer class="disclaimer">
+      <p>
+        <strong>This is not medical advice.</strong> It summarizes public
+        information from ClinicalTrials.gov and can be incomplete or out of date.
+        Always confirm the details with the study team and your own doctor before
+        making any decisions.
+      </p>
+    </footer>
   </main>
 
   <script src="{{ url_for('static', filename='script.js') }}"></script>

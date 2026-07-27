@@ -126,7 +126,7 @@ def _section_overview(protocol: Dict[str, Any]) -> Dict[str, Any]:
         for sentence in _first_sentences(brief, 3):
             bullets.append(sentence)
 
-    return {"heading": "What is this study about?", "bullets": bullets}
+    return {"heading": "What is this study about?", "icon": "📋", "bullets": bullets}
 
 
 def _section_type_and_phase(protocol: Dict[str, Any]) -> Dict[str, Any]:
@@ -146,7 +146,7 @@ def _section_type_and_phase(protocol: Dict[str, Any]) -> Dict[str, Any]:
     if enrollment:
         bullets.append(f"About {enrollment} patients are expected to take part.")
 
-    return {"heading": "Study type and phase", "bullets": bullets}
+    return {"heading": "Study type and phase", "icon": "🔬", "bullets": bullets}
 
 
 def _section_status(protocol: Dict[str, Any]) -> Dict[str, Any]:
@@ -166,7 +166,7 @@ def _section_status(protocol: Dict[str, Any]) -> Dict[str, Any]:
     if completion:
         bullets.append(f"Expected to finish (main results): {_pretty_date(completion)}")
 
-    return {"heading": "Is it enrolling now?", "bullets": bullets}
+    return {"heading": "Is it enrolling now?", "icon": "📅", "bullets": bullets}
 
 
 def _section_interventions(protocol: Dict[str, Any]) -> Dict[str, Any]:
@@ -184,7 +184,7 @@ def _section_interventions(protocol: Dict[str, Any]) -> Dict[str, Any]:
     if remaining > 0:
         bullets.append(f"...and {remaining} more.")
 
-    return {"heading": "What is being tested?", "bullets": bullets}
+    return {"heading": "What is being tested?", "icon": "💉", "bullets": bullets}
 
 
 def _section_eligibility(protocol: Dict[str, Any]) -> Dict[str, Any]:
@@ -214,7 +214,7 @@ def _section_eligibility(protocol: Dict[str, Any]) -> Dict[str, Any]:
         if len(exclusion) > _MAX_CRITERIA:
             bullets.append(f"   - ...and {len(exclusion) - _MAX_CRITERIA} more reason(s).")
 
-    return {"heading": "Who can join?", "bullets": bullets}
+    return {"heading": "Who can join?", "icon": "✅", "bullets": bullets}
 
 
 def _section_locations(protocol: Dict[str, Any]) -> Dict[str, Any]:
@@ -222,7 +222,7 @@ def _section_locations(protocol: Dict[str, Any]) -> Dict[str, Any]:
     bullets: List[str] = []
 
     if not locations:
-        return {"heading": "Where is it happening?", "bullets": bullets}
+        return {"heading": "Where is it happening?", "icon": "📍", "bullets": bullets}
 
     bullets.append(f"Taking place at {len(locations)} location(s), including:")
     for loc in locations[:_MAX_LOCATIONS]:
@@ -234,7 +234,7 @@ def _section_locations(protocol: Dict[str, Any]) -> Dict[str, Any]:
     if remaining > 0:
         bullets.append(f"   - ...and {remaining} more site(s).")
 
-    return {"heading": "Where is it happening?", "bullets": bullets}
+    return {"heading": "Where is it happening?", "icon": "📍", "bullets": bullets}
 
 
 def _section_contacts(protocol: Dict[str, Any]) -> Dict[str, Any]:
@@ -255,7 +255,7 @@ def _section_contacts(protocol: Dict[str, Any]) -> Dict[str, Any]:
             line += " (" + ", ".join(details) + ")"
         bullets.append(line)
 
-    return {"heading": "Who to contact", "bullets": bullets}
+    return {"heading": "Who to contact", "icon": "☎️", "bullets": bullets}
 
 
 # --------------------------------------------------------------------------- #
