@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clinical Trial Summarizer</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <header class="hero">
+    <h1>Clinical Trial Summarizer</h1>
+    <p class="subtitle">
+      Enter a study's NCT number to get a quick, plain-language summary —
+      built for breast and colon cancer patients.
+    </p>
+  </header>
+
+  <main>
+    <form id="search-form" class="search">
+      <label for="nct-input" class="visually-hidden">NCT number</label>
+      <input
+        id="nct-input"
+        type="text"
+        name="nct"
+        placeholder="e.g. NCT05773144"
+        autocomplete="off"
+        spellcheck="false"
+        required
+      />
+      <button type="submit" id="submit-btn">Summarize</button>
+    </form>
+
+    <p class="hint">
+      Tip: you can paste the number, a bare 8-digit id, or a full
+      clinicaltrials.gov study link.
+    </p>
+
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+    <section id="result" class="result" hidden></section>
+
+    <p class="disclaimer">
+      This tool summarizes public information from ClinicalTrials.gov. It is not
+      medical advice. Always confirm details with the study team and your own
+      doctor before making any decisions.
+    </p>
+  </main>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

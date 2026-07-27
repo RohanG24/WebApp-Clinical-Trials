@@ -1,0 +1,49 @@
+{
+  "protocolSection": {
+    "identificationModule": {
+      "nctId": "NCT05773144",
+      "briefTitle": "A Study of Investigational Drug X in Patients With Breast Cancer",
+      "officialTitle": "A Phase 2, Open-Label Study of Drug X in HER2-Positive Metastatic Breast Cancer"
+    },
+    "statusModule": {
+      "overallStatus": "RECRUITING",
+      "startDateStruct": { "date": "2023-06-01" },
+      "primaryCompletionDateStruct": { "date": "2025-12" }
+    },
+    "descriptionModule": {
+      "briefSummary": "This study is testing whether Drug X can slow the growth of breast cancer. Participants will receive Drug X and be monitored closely. The main goal is to measure tumor response. Safety will also be tracked throughout the study.",
+      "detailedDescription": "A long detailed description that spans many pages of protocol text."
+    },
+    "conditionsModule": {
+      "conditions": ["Breast Cancer", "HER2-positive Breast Cancer"],
+      "keywords": ["oncology", "HER2"]
+    },
+    "designModule": {
+      "studyType": "INTERVENTIONAL",
+      "phases": ["PHASE2"],
+      "enrollmentInfo": { "count": 120 }
+    },
+    "armsInterventionsModule": {
+      "interventions": [
+        { "type": "DRUG", "name": "Drug X", "description": "Given by IV every 3 weeks." },
+        { "type": "DRUG", "name": "Standard chemotherapy", "description": "Comparator arm." }
+      ]
+    },
+    "eligibilityModule": {
+      "sex": "FEMALE",
+      "minimumAge": "18 Years",
+      "maximumAge": "N/A",
+      "healthyVolunteers": false,
+      "eligibilityCriteria": "Inclusion Criteria:\n\n* Confirmed diagnosis of HER2-positive breast cancer\n* Able to attend study visits\n* Adequate organ function\n\nExclusion Criteria:\n\n* Pregnant or breastfeeding\n* Serious uncontrolled infection"
+    },
+    "contactsLocationsModule": {
+      "centralContacts": [
+        { "name": "Study Coordinator", "role": "CONTACT", "phone": "800-555-1234", "email": "trials@example.org" }
+      ],
+      "locations": [
+        { "facility": "City Cancer Center", "city": "Boston", "state": "Massachusetts", "country": "United States", "status": "RECRUITING" },
+        { "facility": "West Clinic", "city": "Seattle", "state": "Washington", "country": "United States" }
+      ]
+    }
+  }
+}
