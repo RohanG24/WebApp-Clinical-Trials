@@ -12,6 +12,8 @@ from __future__ import annotations
 import re
 from typing import Any, Dict, List, Optional
 
+from .burden import assess_side_effects, assess_time_toxicity
+
 STUDY_PAGE_URL = "https://clinicaltrials.gov/study/{nct_id}"
 
 # Conditions this tool is intended for. Matching is done on lowercased text.
@@ -88,18 +90,21 @@ def summarize_study(data: Dict[str, Any]) -> Dict[str, Any]:
         "sections": [],
     }
 
-    for builder in (
-        _section_overview,
-        _section_type_and_phase,
-        _section_status,
-        _section_interventions,
-        _section_eligibility,
-        _section_locations,
-        _section_contacts,
-    ):
-        section = builder(protocol)
-        if section and section["bullets"]:
-            summary["sections"].append(section)
+    # Order is deliberate: patient burden (time toxicity, side effects) comes
+    # right after the plain-language overview, because that is what patients
+    # most want to know and what standard listings hide.
+    sections = [
+        _section_overview(protocol),
+        assess_time_toxicity(protocol),
+        assess_side_effects(data),
+        _section_type_and_phase(protocol),
+        _section_status(protocol),
+        _section_interventions(protocol),
+        _section_eligibility(protocol),
+        _section_locations(protocol),
+        _section_contacts(protocol),
+    ]
+    summary["sections"] = [s for s in sections if s and s["bullets"]]
 
     return summary
 

@@ -81,7 +81,7 @@
 
   function renderSection(section) {
     var card = document.createElement("div");
-    card.className = "card";
+    card.className = "card" + (section.featured ? " card-featured" : "");
 
     var h3 = document.createElement("h3");
     h3.textContent = section.heading;

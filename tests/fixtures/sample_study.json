@@ -12,7 +12,7 @@
     },
     "descriptionModule": {
       "briefSummary": "This study is testing whether Drug X can slow the growth of breast cancer. Participants will receive Drug X and be monitored closely. The main goal is to measure tumor response. Safety will also be tracked throughout the study.",
-      "detailedDescription": "A long detailed description that spans many pages of protocol text."
+      "detailedDescription": "Drug X is given by IV infusion every 3 weeks in repeating 21-day cycles. Each infusion requires a study visit to the clinic. Participants will also have a study visit for blood tests on day 1 of every cycle. In the first cycle, patients stay overnight for observation after the first infusion."
     },
     "conditionsModule": {
       "conditions": ["Breast Cancer", "HER2-positive Breast Cancer"],
@@ -43,6 +43,36 @@
       "locations": [
         { "facility": "City Cancer Center", "city": "Boston", "state": "Massachusetts", "country": "United States", "status": "RECRUITING" },
         { "facility": "West Clinic", "city": "Seattle", "state": "Washington", "country": "United States" }
+      ]
+    }
+  },
+  "resultsSection": {
+    "adverseEventsModule": {
+      "frequencyThreshold": "5",
+      "otherEvents": [
+        {
+          "term": "Nausea",
+          "stats": [
+            { "groupId": "EG000", "numAffected": 45, "numAtRisk": 100 },
+            { "groupId": "EG001", "numAffected": 20, "numAtRisk": 100 }
+          ]
+        },
+        {
+          "term": "Fatigue",
+          "stats": [
+            { "groupId": "EG000", "numAffected": 30, "numAtRisk": 100 },
+            { "groupId": "EG001", "numAffected": 25, "numAtRisk": 100 }
+          ]
+        }
+      ],
+      "seriousEvents": [
+        {
+          "term": "Febrile neutropenia",
+          "stats": [
+            { "groupId": "EG000", "numAffected": 8, "numAtRisk": 100 },
+            { "groupId": "EG001", "numAffected": 2, "numAtRisk": 100 }
+          ]
+        }
       ]
     }
   }

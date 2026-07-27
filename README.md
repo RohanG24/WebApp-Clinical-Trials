@@ -30,15 +30,36 @@ NCT number  ──►  fetcher  ──►  summarizer  ──►  bullet-point s
 
 2. **Summarizer** (`clinical_trials/summarizer.py`) — Condenses the structured
    record into short bullets grouped into patient-friendly sections:
-   *What is this study about? · Study type and phase · Is it enrolling now? ·
+   *What is this study about? · **Your time commitment (time toxicity)** ·
+   **Possible side effects** · Study type and phase · Is it enrolling now? ·
    What is being tested? · Who can join? · Where is it happening? · Who to
    contact.* Coded values (e.g. `PHASE2`, `RECRUITING`) are translated into
    plain language, eligibility text is split into simple "you may / may not
    join if…" bullets, and the study is flagged for relevance to breast/colon
    cancer.
 
-3. **Web app** (`app.py` + `templates/` + `static/`) — A Flask front end with a
-   search box and a JSON endpoint (`/api/summary?nct=...`).
+3. **Patient burden** (`clinical_trials/burden.py`) — The two highlighted
+   sections above are the app's main focus, because they are what patients most
+   want to know and what standard listings hide:
+
+   - **Time toxicity** — how much of a patient's life the trial takes up:
+     the overall study length (from start/completion dates), how often treatment
+     is given and in what cycles (dosing cadence parsed from the protocol text),
+     and clinic-visit / infusion / hospital-stay language pulled from the
+     detailed description. If the record doesn't spell this out, the app says so
+     and tells the patient to ask the study team.
+   - **Possible side effects** — when a study has **posted results**, real
+     observed adverse-event rates are aggregated across arms and shown most-
+     frequent-first (common and serious separately). When results are not yet
+     posted (typical for enrolling trials), the app states that plainly instead
+     of guessing.
+
+   These are estimates drawn faithfully from the protocol text and are always
+   labeled as such, with a prompt to confirm details with the study team.
+
+4. **Web app** (`app.py` + `templates/` + `static/`) — A Flask front end with a
+   search box and a JSON endpoint (`/api/summary?nct=...`). The time-toxicity
+   and side-effect cards are visually highlighted so they stand out.
 
 The tool stays faithful to the source: it condenses and re-labels information
 but never invents clinical facts.
@@ -76,6 +97,7 @@ app.py                        Flask app (routes + JSON API)
 clinical_trials/
   fetcher.py                  Fetch a study by NCT number (ClinicalTrials.gov API v2)
   summarizer.py               Turn the record into patient-friendly bullets
+  burden.py                   Time toxicity + side-effect extraction (main focus)
 templates/index.html          Search page
 static/style.css, script.js   Front-end styling and logic
 tests/                        Unit tests + sample study fixture
