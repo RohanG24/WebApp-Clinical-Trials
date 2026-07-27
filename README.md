@@ -103,6 +103,14 @@ static/style.css, script.js   Front-end styling and logic
 tests/                        Unit tests + sample study fixture
 ```
 
+## Changing the header image
+
+The page shows a welcoming image band under the header. By default it renders a
+built-in illustration (`static/img/clinic-visit.svg`). To use your own photo
+instead, save it as **`static/img/clinic-visit.jpg`** — the page prefers the
+`.jpg` and falls back to the illustration if it isn't there, so no code change
+is needed. (Make sure you have the right to use any stock photo you add.)
+
 ## Disclaimer
 
 This tool summarizes public information from ClinicalTrials.gov. It is **not

@@ -18,6 +18,15 @@
     </div>
   </header>
 
+  <div class="photo-band">
+    <img
+      class="clinic-photo"
+      src="{{ url_for('static', filename='img/clinic-visit.jpg') }}"
+      onerror="this.onerror=null; this.src='{{ url_for('static', filename='img/clinic-visit.svg') }}';"
+      alt="A clinician talking with a patient during an appointment"
+    />
+  </div>
+
   <main>
     <form id="search-form" class="search" role="search">
       <label for="nct-input" class="visually-hidden">NCT number</label>

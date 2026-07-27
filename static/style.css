@@ -23,25 +23,6 @@
   --measure: 40rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0f151c;
-    --surface: #182430;
-    --surface-alt: #1c2c3c;
-    --ink: #e8eef5;
-    --ink-soft: #a7b6c6;
-    --accent: #5aa2ee;
-    --accent-dark: #8fc0f6;
-    --accent-soft: #1e2f42;
-    --ok-bg: #16351f;
-    --ok-ink: #8fe0ac;
-    --warn-bg: #3a2a12;
-    --warn-ink: #f2c88a;
-    --border: #2a3a4b;
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.35);
-  }
-}
-
 * { box-sizing: border-box; }
 
 html { -webkit-text-size-adjust: 100%; }
@@ -71,18 +52,36 @@ body {
 .hero-mark { font-size: 1em; }
 .subtitle { margin: 0 auto; max-width: 34rem; font-size: 1.05rem; opacity: 0.96; }
 
+/* ------------------------------ Photo band ------------------------------ */
+.photo-band {
+  max-width: var(--measure);
+  margin: -2.75rem auto 0;      /* overlap the bottom of the hero */
+  padding: 0 1.25rem;
+  position: relative;
+  z-index: 1;
+}
+.clinic-photo {
+  display: block;
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: var(--radius);
+  border: 4px solid var(--surface);
+  box-shadow: var(--shadow);
+}
+
 /* -------------------------------- Layout -------------------------------- */
 main {
   max-width: var(--measure);
   margin: 0 auto;
-  padding: 0 1.25rem 4rem;
+  padding: 1.5rem 1.25rem 4rem;
 }
 
 /* -------------------------------- Search -------------------------------- */
 .search {
   display: flex;
   gap: 0.6rem;
-  margin-top: -1.75rem;
+  margin-top: 0.25rem;
   margin-bottom: 0.6rem;
 }
 .search input {
@@ -279,14 +278,15 @@ main {
 /* ------------------------------ Responsive ------------------------------ */
 @media (max-width: 540px) {
   body { font-size: 17px; }
-  .search { flex-direction: column; margin-top: -1.5rem; }
+  .search { flex-direction: column; margin-top: 0.25rem; }
   .search button { width: 100%; }
+  .clinic-photo { height: 170px; }
 }
 
 /* -------------------------------- Print -------------------------------- */
 @media print {
   body { background: #fff; color: #000; font-size: 12pt; }
-  .hero, .search, .hint, .status, .placeholder, .skeleton, .toolbar { display: none !important; }
+  .hero, .photo-band, .search, .hint, .status, .placeholder, .skeleton, .toolbar { display: none !important; }
   main { max-width: none; padding: 0; }
   .card, .result-header, .disclaimer {
     box-shadow: none;
