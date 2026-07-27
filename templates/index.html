@@ -7,62 +7,73 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 </head>
 <body>
-  <header class="hero">
-    <div class="hero-inner">
-      <h1><span class="hero-mark" aria-hidden="true">🩺</span> Clinical Trial Summarizer</h1>
-      <p class="subtitle">
-        Enter a study's NCT number to get a clear, plain-language summary —
-        built for breast and colon cancer patients. We focus on what a trial
-        would actually mean for your time and your body.
-      </p>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="/">
+        <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 13h3l2 5 4-12 2 7h5" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="brand-name">Clinical Trial Summarizer</span>
+      </a>
+      <span class="brand-tag">Plain-language trial summaries</span>
     </div>
   </header>
 
-  <div class="photo-band">
-    <img
-      class="clinic-photo"
-      src="{{ url_for('static', filename='img/clinic-visit.jpg') }}"
-      onerror="this.onerror=null; this.src='{{ url_for('static', filename='img/clinic-visit.svg') }}';"
-      alt="A clinician talking with a patient during an appointment"
-    />
-  </div>
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <h1>Understand a cancer trial in plain language.</h1>
+        <p class="lede">
+          Enter a study's NCT number for a clear summary written for breast and
+          colon cancer patients — with a focus on what a trial would actually
+          mean for your time and your body.
+        </p>
 
-  <main>
-    <form id="search-form" class="search" role="search">
-      <label for="nct-input" class="visually-hidden">NCT number</label>
-      <input
-        id="nct-input"
-        type="text"
-        name="nct"
-        placeholder="e.g. NCT05773144"
-        autocomplete="off"
-        spellcheck="false"
-        autocapitalize="characters"
-        required
-      />
-      <button type="submit" id="submit-btn">Summarize</button>
-    </form>
+        <form id="search-form" class="search" role="search">
+          <label for="nct-input" class="visually-hidden">NCT number</label>
+          <input
+            id="nct-input"
+            type="text"
+            name="nct"
+            placeholder="Enter an NCT number, e.g. NCT05773144"
+            autocomplete="off"
+            spellcheck="false"
+            autocapitalize="characters"
+            required
+          />
+          <button type="submit" id="submit-btn">Summarize</button>
+        </form>
+        <p class="hint">
+          Accepts a full number, a bare 8-digit id, or a clinicaltrials.gov link.
+          <button type="button" class="example" data-nct="NCT05773144">Try an example</button>
+        </p>
+      </div>
 
-    <p class="hint">
-      You can paste the number, a bare 8-digit id, or a full clinicaltrials.gov
-      study link. Try an example:
-      <button type="button" class="example" data-nct="NCT05773144">NCT05773144</button>
-    </p>
+      <div class="hero-figure">
+        <img
+          class="clinic-photo"
+          src="{{ url_for('static', filename='img/clinic-visit.jpg') }}"
+          onerror="this.onerror=null; this.src='{{ url_for('static', filename='img/clinic-visit.svg') }}';"
+          alt="A clinician talking with a patient during an appointment"
+        />
+      </div>
+    </div>
+  </section>
 
+  <main class="wrap">
     <div id="status" class="status" role="status" aria-live="polite"></div>
 
-    <!-- Friendly first-visit placeholder -->
     <section id="placeholder" class="placeholder">
-      <div class="placeholder-icon" aria-hidden="true">🔎</div>
-      <p>Enter an NCT number above to see a patient-friendly summary here.</p>
+      <p class="placeholder-lead">Your summary will appear here.</p>
+      <p class="placeholder-sub">Each report covers:</p>
       <ul class="placeholder-list">
-        <li>⏳ How much of your time the trial would take</li>
-        <li>💊 Side effects that have been reported</li>
-        <li>✅ Whether you might be able to join</li>
+        <li>How much of your time the trial would take</li>
+        <li>Side effects that have been reported</li>
+        <li>Whether you may be eligible to join</li>
       </ul>
     </section>
 
-    <!-- Skeleton shown while loading -->
     <section id="skeleton" class="skeleton" hidden aria-hidden="true">
       <div class="skeleton-header"></div>
       <div class="skeleton-card"></div>
@@ -74,8 +85,8 @@
     <footer class="disclaimer">
       <p>
         <strong>This is not medical advice.</strong> It summarizes public
-        information from ClinicalTrials.gov and can be incomplete or out of date.
-        Always confirm the details with the study team and your own doctor before
+        information from ClinicalTrials.gov, which can be incomplete or out of
+        date. Confirm all details with the study team and your own doctor before
         making any decisions.
       </p>
     </footer>

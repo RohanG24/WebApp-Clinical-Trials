@@ -73,7 +73,7 @@ def assess_time_toxicity(protocol: Dict[str, Any]) -> Dict[str, Any]:
 
     return {
         "heading": "Your time commitment (time toxicity)",
-        "icon": "⏳",
+        "icon": "clock",
         "featured": True,
         "bullets": bullets,
     }
@@ -249,7 +249,7 @@ def assess_side_effects(data: Dict[str, Any]) -> Dict[str, Any]:
 
     return {
         "heading": "Possible side effects",
-        "icon": "💊",
+        "icon": "activity",
         "featured": True,
         "bullets": bullets,
     }
