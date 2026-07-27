@@ -92,17 +92,19 @@ def summarize_study(data: Dict[str, Any]) -> Dict[str, Any]:
 
     # Order is deliberate: patient burden (time toxicity, side effects) comes
     # right after the plain-language overview, because that is what patients
-    # most want to know and what standard listings hide.
+    # most want to know and what standard listings hide. Where the trial is
+    # happening and who to contact follow next, since they are the most
+    # actionable ("can I get there, and who do I call?").
     sections = [
         _section_overview(protocol),
         assess_time_toxicity(protocol),
         assess_side_effects(data),
+        _section_locations(protocol),
+        _section_contacts(protocol),
         _section_type_and_phase(protocol),
         _section_status(protocol),
         _section_interventions(protocol),
         _section_eligibility(protocol),
-        _section_locations(protocol),
-        _section_contacts(protocol),
     ]
     summary["sections"] = [s for s in sections if s and s["bullets"]]
 
