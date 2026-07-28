@@ -75,6 +75,7 @@
     resultsEl.appendChild(summary);
 
     results.forEach(function (r) { resultsEl.appendChild(renderCard(r)); });
+    if (window.Glossary) window.Glossary.apply(resultsEl);
     resultsEl.hidden = false;
   }
 

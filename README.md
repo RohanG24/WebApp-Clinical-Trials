@@ -67,7 +67,15 @@ NCT number  ──►  fetcher  ──►  summarizer  ──►  bullet-point s
    with a short "estimated from…" basis. Results can be filtered by the time a
    patient can give and are sorted lightest-first.
 
-5. **Web app** (`app.py` + `templates/` + `static/`) — A Flask front end with two
+5. **Plain-language glossary** (`static/glossary.js`) — A curated dictionary of
+   trial and cancer terms (randomized, placebo, metastatic, adjuvant, time
+   toxicity, …). After a summary or search renders, a client-side pass wraps any
+   matched terms so a patient can hover, tap, or keyboard-focus them to read a
+   one-sentence plain definition. Terms are wrapped by rebuilding text nodes
+   (never `innerHTML` on page content), and each carries a screen-reader
+   definition.
+
+6. **Web app** (`app.py` + `templates/` + `static/`) — A Flask front end with two
    pages: **Summarize** (`/`, box + `/api/summary?nct=...`) and **Find trials**
    (`/search`, form + `/api/search?condition=&location=&max_time=`). The
    time-toxicity and side-effect cards are highlighted. Opening `/?nct=NCT...`

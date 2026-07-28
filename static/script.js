@@ -137,10 +137,17 @@
     toolbar.appendChild(printBtn);
     resultEl.appendChild(toolbar);
 
+    var tip = document.createElement("p");
+    tip.className = "glossary-hint";
+    tip.textContent = "Tip: underlined terms have plain-language definitions — hover or tap them.";
+    resultEl.appendChild(tip);
+
     // ---- Sections ----
     (summary.sections || []).forEach(function (section) {
       resultEl.appendChild(renderSection(section));
     });
+
+    if (window.Glossary) window.Glossary.apply(resultEl);
 
     resultEl.hidden = false;
     resultEl.scrollIntoView({ behavior: "smooth", block: "start" });
