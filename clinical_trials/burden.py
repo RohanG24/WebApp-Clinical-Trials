@@ -152,7 +152,7 @@ def _extract_cadence(text: str) -> Optional[str]:
         (r"\bqd\b", "once a day"),
         (r"\b(once\s+)?weekly\b|\bonce\s+a\s+week\b|\bqw\b", "about once a week"),
         (r"\b(once\s+)?monthly\b|\bonce\s+a\s+month\b", "about once a month"),
-        (r"\bdaily\b", "every day"),
+        (r"\bdaily\b|\bevery\s+day\b", "every day"),
     ]
     for pattern, phrase in fixed:
         if re.search(pattern, low):
@@ -211,6 +211,101 @@ def _extract_visit_mentions(text: str) -> List[str]:
         if len(found) >= _MAX_VISIT_SNIPPETS:
             break
     return found
+
+
+# --------------------------------------------------------------------------- #
+# Time-commitment estimate (for the trial finder / filtering)
+# --------------------------------------------------------------------------- #
+#
+# ClinicalTrials.gov does not publish an "hours per week" figure, so we estimate
+# a coarse level from how often treatment is given and whether it involves clinic
+# visits. This is intentionally rough and always labeled as an estimate.
+
+# Rank order, lightest first. "unknown" sorts after the known levels.
+LEVEL_ORDER = ["Light", "Moderate", "Intensive"]
+LEVEL_RANK = {"Light": 0, "Moderate": 1, "Intensive": 2, "Unknown": 3}
+
+_IV_HINT = re.compile(r"\b(infusion|intravenous|\biv\b|injection|clinic|study visit)", re.IGNORECASE)
+
+
+def estimate_time_commitment(protocol: Dict[str, Any]) -> Dict[str, Any]:
+    """Estimate a Light / Moderate / Intensive weekly time commitment.
+
+    Returns a dict with ``level`` (one of LEVEL_ORDER or "Unknown"),
+    ``rank`` (for sorting/filtering), ``hours`` (a plain-language range or
+    None), and ``basis`` (a short explanation shown to the patient).
+    """
+    text = _schedule_text(protocol)
+    cadence = _extract_cadence(text)
+    per_week = _cadence_per_week(cadence)
+
+    if per_week is None:
+        return {
+            "level": "Unknown",
+            "rank": LEVEL_RANK["Unknown"],
+            "hours": None,
+            "basis": "Not enough schedule detail to estimate the time commitment.",
+        }
+
+    visit_based = bool(_IV_HINT.search(text))
+    overnight = bool(re.search(r"overnight|inpatient|hospital stay|admitted", text, re.I))
+
+    if visit_based:
+        weekly_hours = per_week * 3.0            # ~3 hrs per clinic visit incl. travel
+    else:
+        weekly_hours = min(per_week * 0.25, 1.5)  # at-home dosing: mostly monitoring
+    if overnight:
+        weekly_hours += 4.0
+
+    if weekly_hours < 2:
+        level, hours = "Light", "roughly 1-2 hours a week"
+    elif weekly_hours <= 5:
+        level, hours = "Moderate", "roughly 3-5 hours a week"
+    else:
+        level, hours = "Intensive", "more than 5 hours a week"
+
+    basis_parts = []
+    if cadence:
+        basis_parts.append("treatment " + cadence)
+    basis_parts.append("clinic-visit based" if visit_based else "mostly at-home dosing")
+    if overnight:
+        basis_parts.append("includes an overnight stay")
+    basis = "Estimated from: " + ", ".join(basis_parts) + "."
+
+    return {
+        "level": level,
+        "rank": LEVEL_RANK[level],
+        "hours": hours,
+        "basis": basis,
+    }
+
+
+def _cadence_per_week(cadence: Optional[str]) -> Optional[float]:
+    """Convert a cadence phrase into an approximate number of doses per week."""
+    if not cadence:
+        return None
+    c = cadence.lower()
+    if "three times a day" in c:
+        return 21.0
+    if "twice a day" in c:
+        return 14.0
+    if "every day" in c:
+        return 7.0
+    if "once a week" in c:
+        return 1.0
+    if "once a month" in c:
+        return 1 / 4.3
+
+    m = re.search(r"every (\d+) day", c)
+    if m:
+        return 7.0 / int(m.group(1))
+    m = re.search(r"every (\d+) week", c)
+    if m:
+        return 1.0 / int(m.group(1))
+    m = re.search(r"every (\d+) month", c)
+    if m:
+        return 1.0 / (4.3 * int(m.group(1)))
+    return None
 
 
 # --------------------------------------------------------------------------- #

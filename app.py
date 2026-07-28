@@ -1,4 +1,4 @@
-"""Flask web app: NCT number in, patient-friendly bullet-point summary out."""
+"""Flask web app: summarize a trial by NCT number, or search for trials."""
 
 from __future__ import annotations
 
@@ -8,6 +8,7 @@ from clinical_trials import (
     TrialFetchError,
     fetch_study,
     normalize_nct_id,
+    search_studies,
     summarize_study,
 )
 
@@ -17,6 +18,11 @@ app = Flask(__name__)
 @app.route("/")
 def index():
     return render_template("index.html")
+
+
+@app.route("/search")
+def search_page():
+    return render_template("search.html")
 
 
 @app.route("/api/summary")
@@ -31,6 +37,24 @@ def api_summary():
         return jsonify({"error": str(exc)}), 400
 
     return jsonify(summary)
+
+
+@app.route("/api/search")
+def api_search():
+    """Search trials by ?condition=, optional ?location= and ?max_time= level."""
+    condition = request.args.get("condition", "")
+    location = request.args.get("location", "")
+    max_time = request.args.get("max_time", "")
+    try:
+        results = search_studies(
+            condition=condition,
+            location=location or None,
+            max_level=max_time or None,
+        )
+    except TrialFetchError as exc:
+        return jsonify({"error": str(exc)}), 400
+
+    return jsonify(results)
 
 
 @app.route("/healthz")

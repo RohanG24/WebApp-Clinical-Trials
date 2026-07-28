@@ -57,9 +57,21 @@ NCT number  ──►  fetcher  ──►  summarizer  ──►  bullet-point s
    These are estimates drawn faithfully from the protocol text and are always
    labeled as such, with a prompt to confirm details with the study team.
 
-4. **Web app** (`app.py` + `templates/` + `static/`) — A Flask front end with a
-   search box and a JSON endpoint (`/api/summary?nct=...`). The time-toxicity
-   and side-effect cards are visually highlighted so they stand out.
+4. **Trial finder** (`clinical_trials/search.py`) — A separate feature to
+   *discover* trials rather than look one up. It searches the ClinicalTrials.gov
+   search API by **condition** and **location** (recruiting studies only) and,
+   for each match, estimates a **time commitment** — Light / Moderate /
+   Intensive (roughly 1–2, 3–5, or 5+ hours a week). Because the registry has no
+   "hours per week" field, the estimate is derived from dosing cadence and
+   clinic-visit signals (`burden.estimate_time_commitment`) and is always shown
+   with a short "estimated from…" basis. Results can be filtered by the time a
+   patient can give and are sorted lightest-first.
+
+5. **Web app** (`app.py` + `templates/` + `static/`) — A Flask front end with two
+   pages: **Summarize** (`/`, box + `/api/summary?nct=...`) and **Find trials**
+   (`/search`, form + `/api/search?condition=&location=&max_time=`). The
+   time-toxicity and side-effect cards are highlighted. Opening `/?nct=NCT...`
+   runs a summary automatically, so search results deep-link into the summarizer.
 
 The tool stays faithful to the source: it condenses and re-labels information
 but never invents clinical facts.

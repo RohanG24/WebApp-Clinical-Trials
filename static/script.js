@@ -52,6 +52,13 @@
     });
   });
 
+  // Arriving from a search result: /?nct=NCT... runs the summary automatically.
+  var preset = new URLSearchParams(window.location.search).get("nct");
+  if (preset) {
+    input.value = preset;
+    fetchSummary(preset);
+  }
+
   function fetchSummary(nct) {
     setLoading(true);
     setStatus("", false);

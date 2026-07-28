@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Find Clinical Trials</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="/">
+        <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 13h3l2 5 4-12 2 7h5" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="brand-name">Clinical Trial Summarizer</span>
+      </a>
+      <nav class="site-nav">
+        <a href="/">Summarize</a>
+        <a href="/search" class="active">Find trials</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero hero-compact">
+    <div class="wrap">
+      <h1>Find a trial that fits your life.</h1>
+      <p class="lede">
+        Search recruiting trials by condition and location, and filter by how
+        much time you can give each week.
+      </p>
+
+      <form id="find-form" class="find-form">
+        <div class="field">
+          <label for="condition">Condition or disease</label>
+          <input id="condition" name="condition" type="text"
+                 placeholder="e.g. breast cancer" required />
+        </div>
+        <div class="field">
+          <label for="location">Location <span class="opt">(optional)</span></label>
+          <input id="location" name="location" type="text"
+                 placeholder="e.g. Boston, or Massachusetts" />
+        </div>
+        <div class="field">
+          <label for="max_time">Time you can give</label>
+          <select id="max_time" name="max_time">
+            <option value="">Any amount</option>
+            <option value="Light">Light — about 1–2 hours a week</option>
+            <option value="Moderate">Moderate — about 3–5 hours a week</option>
+            <option value="Intensive">Intensive — 5+ hours a week</option>
+          </select>
+        </div>
+        <div class="field field-submit">
+          <button type="submit" id="find-btn">Search</button>
+        </div>
+      </form>
+      <p class="hint">
+        Shows currently recruiting studies. Time estimates are approximate — see
+        the note under each result.
+      </p>
+    </div>
+  </section>
+
+  <main class="wrap">
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+
+    <section id="placeholder" class="placeholder">
+      <p class="placeholder-lead">Your matches will appear here.</p>
+      <p class="placeholder-sub">
+        Enter a condition above to search ClinicalTrials.gov for recruiting
+        studies, ranked from the lightest time commitment upward.
+      </p>
+    </section>
+
+    <section id="find-skeleton" class="skeleton" hidden aria-hidden="true">
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+    </section>
+
+    <section id="results" class="find-results" hidden></section>
+
+    <footer class="disclaimer">
+      <p>
+        <strong>This is not medical advice.</strong> Search results and time
+        estimates come from public ClinicalTrials.gov data and can be incomplete
+        or out of date. Confirm eligibility and scheduling with each study team.
+      </p>
+    </footer>
+  </main>
+
+  <script src="{{ url_for('static', filename='search.js') }}"></script>
+</body>
+</html>
