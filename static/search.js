@@ -15,15 +15,25 @@
     Unknown: "level-unknown"
   };
 
-  form.addEventListener("submit", function (event) {
-    event.preventDefault();
-    var condition = document.getElementById("condition").value.trim();
-    if (!condition) return;
-    runSearch({
-      condition: condition,
+  var hasSearched = false;
+
+  function currentParams() {
+    return {
+      condition: document.getElementById("condition").value.trim(),
       location: document.getElementById("location").value.trim(),
       max_time: document.getElementById("max_time").value
-    });
+    };
+  }
+
+  form.addEventListener("submit", function (event) {
+    event.preventDefault();
+    if (!currentParams().condition) return;
+    runSearch(currentParams());
+  });
+
+  // Changing the time filter re-runs the search immediately once one has run.
+  document.getElementById("max_time").addEventListener("change", function () {
+    if (hasSearched && currentParams().condition) runSearch(currentParams());
   });
 
   function runSearch(params) {
@@ -46,6 +56,7 @@
           placeholderEl.hidden = false;
           return;
         }
+        hasSearched = true;
         render(payload.body);
       })
       .catch(function () {

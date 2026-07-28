@@ -102,20 +102,17 @@ def build_result(study: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def filter_by_level(results: List[Dict[str, Any]], max_level: str) -> List[Dict[str, Any]]:
-    """Keep results at or below the requested commitment level.
+    """Keep only results at or below the requested commitment level.
 
-    Studies whose commitment could not be estimated are kept (and flagged in the
-    UI) rather than silently hidden, since we cannot rule them in or out.
+    Trials whose commitment couldn't be estimated ("Unknown", rank 3) fall above
+    every ceiling and are therefore excluded when a time filter is active -- a
+    patient filtering by the time they can give shouldn't be shown trials we
+    can't place. With no filter selected, everything (including Unknown) is kept.
     """
     ceiling = LEVEL_RANK.get(max_level.title())
     if ceiling is None:
         return results
-    kept = []
-    for r in results:
-        rank = r["time"]["rank"]
-        if rank <= ceiling or r["time"]["level"] == "Unknown":
-            kept.append(r)
-    return kept
+    return [r for r in results if r["time"]["rank"] <= ceiling]
 
 
 def _summarize_locations(locations: List[Dict[str, Any]], limit: int = 3) -> List[str]:

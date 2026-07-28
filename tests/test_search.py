@@ -37,11 +37,42 @@ class EstimateTimeCommitmentTests(unittest.TestCase):
         )
         self.assertEqual(est["level"], "Intensive")
 
-    def test_no_schedule_is_unknown(self):
+    def test_featureless_record_is_unknown(self):
         est = estimate_time_commitment(protocol_with_schedule("This study looks at outcomes."))
         self.assertEqual(est["level"], "Unknown")
         self.assertIsNone(est["hours"])
         self.assertEqual(est["rank"], 3)
+
+
+class FallbackEstimateTests(unittest.TestCase):
+    """When no cadence is parseable, coarse signals still yield a best-effort level."""
+
+    def test_observational_is_light(self):
+        est = estimate_time_commitment({"designModule": {"studyType": "OBSERVATIONAL"}})
+        self.assertEqual(est["level"], "Light")
+        self.assertIn("Rough estimate", est["basis"])
+
+    def test_oral_drug_without_cadence_is_light(self):
+        protocol = {
+            "descriptionModule": {"detailedDescription": "Study drug is taken by mouth."},
+            "armsInterventionsModule": {"interventions": [{"type": "DRUG", "name": "Drug A"}]},
+        }
+        self.assertEqual(estimate_time_commitment(protocol)["level"], "Light")
+
+    def test_infusion_without_cadence_is_moderate(self):
+        protocol = {
+            "descriptionModule": {"detailedDescription": "Given as an intravenous infusion at the clinic."},
+            "armsInterventionsModule": {"interventions": [{"type": "DRUG", "name": "Drug B"}]},
+        }
+        self.assertEqual(estimate_time_commitment(protocol)["level"], "Moderate")
+
+    def test_radiation_is_intensive(self):
+        protocol = {"armsInterventionsModule": {"interventions": [{"type": "RADIATION", "name": "RT"}]}}
+        self.assertEqual(estimate_time_commitment(protocol)["level"], "Intensive")
+
+    def test_plain_drug_without_details_is_moderate(self):
+        protocol = {"armsInterventionsModule": {"interventions": [{"type": "DRUG", "name": "Drug C"}]}}
+        self.assertEqual(estimate_time_commitment(protocol)["level"], "Moderate")
 
 
 class BuildResultTests(unittest.TestCase):
@@ -67,7 +98,7 @@ class FilterByLevelTests(unittest.TestCase):
     def _mk(self, level, rank):
         return {"title": "x", "time": {"level": level, "rank": rank}}
 
-    def test_light_ceiling_excludes_intensive_keeps_unknown(self):
+    def test_light_ceiling_keeps_only_light(self):
         rows = [
             self._mk("Light", 0),
             self._mk("Moderate", 1),
@@ -76,10 +107,11 @@ class FilterByLevelTests(unittest.TestCase):
         ]
         kept = filter_by_level(rows, "Light")
         levels = [r["time"]["level"] for r in kept]
-        self.assertIn("Light", levels)
-        self.assertIn("Unknown", levels)          # cannot rule out -> kept, flagged
-        self.assertNotIn("Moderate", levels)
-        self.assertNotIn("Intensive", levels)
+        self.assertEqual(levels, ["Light"])       # Unknown and heavier levels dropped
+
+    def test_no_filter_keeps_everything(self):
+        rows = [self._mk("Light", 0), self._mk("Unknown", 3)]
+        self.assertEqual(len(filter_by_level(rows, "")), 2)
 
     def test_moderate_ceiling(self):
         rows = [self._mk("Light", 0), self._mk("Moderate", 1), self._mk("Intensive", 2)]

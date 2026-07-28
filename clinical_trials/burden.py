@@ -240,12 +240,9 @@ def estimate_time_commitment(protocol: Dict[str, Any]) -> Dict[str, Any]:
     per_week = _cadence_per_week(cadence)
 
     if per_week is None:
-        return {
-            "level": "Unknown",
-            "rank": LEVEL_RANK["Unknown"],
-            "hours": None,
-            "basis": "Not enough schedule detail to estimate the time commitment.",
-        }
+        # No parseable dosing cadence -- fall back to coarser signals so the
+        # trial still gets a best-effort level (most trials land here).
+        return _fallback_estimate(protocol, text)
 
     visit_based = bool(_IV_HINT.search(text))
     overnight = bool(re.search(r"overnight|inpatient|hospital stay|admitted", text, re.I))
@@ -277,6 +274,52 @@ def estimate_time_commitment(protocol: Dict[str, Any]) -> Dict[str, Any]:
         "rank": LEVEL_RANK[level],
         "hours": hours,
         "basis": basis,
+    }
+
+
+_ORAL_HINT = re.compile(r"\b(oral(ly)?|tablet|capsule|by mouth|pill|self-administer)", re.IGNORECASE)
+
+
+def _fallback_estimate(protocol: Dict[str, Any], text: str) -> Dict[str, Any]:
+    """Best-effort level when no dosing cadence could be parsed.
+
+    Uses coarse signals (study type, intervention type, oral vs. clinic hints).
+    Deliberately approximate and labeled as such; only truly featureless records
+    remain "Unknown".
+    """
+    design = protocol.get("designModule", {})
+    study_type = design.get("studyType", "")
+    interventions = protocol.get("armsInterventionsModule", {}).get("interventions", []) or []
+    itypes = {i.get("type", "") for i in interventions}
+    inames = " ".join((i.get("name", "") or "") for i in interventions)
+    blob = (text + " " + inames)
+
+    visit_based = bool(_IV_HINT.search(blob))
+    oral = bool(_ORAL_HINT.search(blob))
+
+    if study_type == "OBSERVATIONAL":
+        level, hours, why = "Light", "roughly 1-2 hours a week", "observational study (no assigned treatment)"
+    elif "RADIATION" in itypes:
+        level, hours, why = "Intensive", "more than 5 hours a week", "radiation therapy usually means frequent clinic visits"
+    elif visit_based:
+        level, hours, why = "Moderate", "roughly 3-5 hours a week", "treatment appears to involve clinic visits (e.g. infusions)"
+    elif oral:
+        level, hours, why = "Light", "roughly 1-2 hours a week", "appears to be at-home oral treatment"
+    elif itypes & {"DRUG", "BIOLOGICAL"}:
+        level, hours, why = "Moderate", "roughly 3-5 hours a week", "drug study, but the visit schedule isn't specified"
+    else:
+        return {
+            "level": "Unknown",
+            "rank": LEVEL_RANK["Unknown"],
+            "hours": None,
+            "basis": "Not enough detail to estimate the time commitment.",
+        }
+
+    return {
+        "level": level,
+        "rank": LEVEL_RANK[level],
+        "hours": hours,
+        "basis": "Rough estimate (limited schedule detail): " + why + ".",
     }
 
 
