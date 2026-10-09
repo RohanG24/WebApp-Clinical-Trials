@@ -84,6 +84,28 @@ NCT number  ──►  fetcher  ──►  summarizer  ──►  bullet-point s
 The tool stays faithful to the source: it condenses and re-labels information
 but never invents clinical facts.
 
+## Deploying (sharing it on the web)
+
+The app is a stateless Flask service (no database, no login), so it hosts
+easily on any free Python platform. It's set up for a production server with
+`gunicorn` (in `requirements.txt`) and a `Procfile` / `render.yaml`.
+
+The start command every host needs:
+
+```
+gunicorn app:app --bind 0.0.0.0:$PORT
+```
+
+**Render (recommended, free):** push this repo to GitHub, then in Render choose
+**New + → Blueprint** and point it at the repo (it reads `render.yaml`), or
+**New + → Web Service** with build command `pip install -r requirements.txt`
+and the start command above. The host must allow outbound internet to
+`clinicaltrials.gov` (Render and similar platforms do).
+
+Other options that use the same `Procfile`: Railway, Fly.io, and Heroku-style
+hosts. For a quick temporary share from your own machine, `ngrok http 5000`
+exposes a local `python app.py` at a public URL.
+
 ## Running locally
 
 Requires Python 3.9+ and outbound network access to `clinicaltrials.gov`.
